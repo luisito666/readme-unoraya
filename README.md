@@ -55,10 +55,9 @@ repository_url = "761265xxxx.dkr.ecr.us-east-1.amazonaws.com/fundacionbolivar"
    --output text
 2. aws ssm start-session --target i-0078a11e6d98b64ee -> Cambia dependiendo del deploy
 
-# Sincronizacion Base de datos.
+# Sincronización de la base de datos.
 
-1. Ingresar al bastion host 
-2. Inicia una sesión en PostgreSQL con el usuario y la base de datos donde deseas importar el archivo.
+Ingresar al bastion host. Inicia una sesión en PostgreSQL con el usuario y la base de datos donde deseas importar el archivo:
 
 ```
 psql -U myuser -d mydatabase
@@ -66,7 +65,7 @@ psql -U myuser -d mydatabase
 
 Una vez que estés en la sesión de PostgreSQL, ejecuta el comando \i seguido del nombre del archivo de copia de seguridad que deseas importar. Por ejemplo:
 
-Asegurate de estar en el directorio donde esta el .sql
+Asegúrate de estar en el directorio donde está el archivo .sql
 
 ```
 \i backup.sql
@@ -87,4 +86,5 @@ cd bk_images
 aws s3 sync . s3://nombre_del_bucket
 ```
 
+En resumen, este texto explica los pasos necesarios para desplegar una aplicación WordPress en AWS mediante el uso de Terraform. También se incluyen instrucciones para la sincronización de los buckets de S3 y la importación de un backup de PostgreSQL.
 
