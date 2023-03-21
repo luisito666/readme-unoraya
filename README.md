@@ -12,14 +12,33 @@ Este repositorio crea la infraestructura necesaria para el despliegue de la apli
 
 # Deployment de IaC
 
-1. Command: terraform init
-2. Command: terraform apply --auto-approve --target module.network
+1. Inicializamos el terraform
+```
+terraform init
+```
+2. El primer modulo que se despliega es el de red ya que de este depende toda la infra
+```
+terraform apply --auto-approve --target module.network
+```
 3. Añadir CNAME Records al proveedor DNS (CPANEL/GoDaddy...). El CNAME se extrae del servicio.
    AWS Certificate Manager/Certificates/*.sudominio/Domains (1). Formato Name/Value -> Cambia dependiendo del deploy
-4. Command: terraform apply --auto-approve --target module.ec2
-5. Command: terraform apply --auto-approve --target module.database
-6. Command: terraform apply --auto-approve --target module.backend
-7. Command: terraform apply --auto-approve --target module.frontend
+
+4. Se ejecuta el modulo de ec2, este se encarga de crear el bastion host
+```
+terraform apply --auto-approve --target module.ec2
+```
+5. Ahora desplegamos la base de datos
+```
+terraform apply --auto-approve --target module.database
+```
+6. Ahora bamos a desplegar el ecs y los micro servicios
+```
+terraform apply --auto-approve --target module.backend
+```
+7. Ahora vamos a desplegar el fronted, este se encargara de crear un cdn
+```
+terraform apply --auto-approve --target module.frontend
+```
 8. Crear CNAME para apuntar registro DNS a CNAME del ALB -> Cambia dependiendo del deploy
 9. Command: terraform output:
 ```
@@ -35,5 +54,37 @@ repository_url = "761265xxxx.dkr.ecr.us-east-1.amazonaws.com/fundacionbolivar"
    --query 'Reservations[*].Instances[*].{Instance:InstanceId,Name:Tags[?Key==`Name`]|[0].Value}' \
    --output text
 2. aws ssm start-session --target i-0078a11e6d98b64ee -> Cambia dependiendo del deploy
+
+# Sincronizacion Base de datos.
+
+1. Ingresar al bastion host 
+2. Inicia una sesión en PostgreSQL con el usuario y la base de datos donde deseas importar el archivo.
+
+```
+psql -U myuser -d mydatabase
+```
+
+Una vez que estés en la sesión de PostgreSQL, ejecuta el comando \i seguido del nombre del archivo de copia de seguridad que deseas importar. Por ejemplo:
+
+Asegurate de estar en el directorio donde esta el .sql
+
+```
+\i backup.sql
+```
+
+Esto ejecutará el archivo de copia de seguridad y restaurará los datos en la base de datos especificada.
+
+# Sincronizar buckets de S3
+
+1. una vez tengamos el backup de las imagenes listas, lo descomprimimos e ingresamos al directorio
+```
+tar -xvf bk_images.tar.gz
+cd bk_images
+```
+2. ahora ejecutamos el comando para que se realice la sincronizacion 
+
+```
+aws s3 sync . s3://nombre_del_bucket
+```
 
 
