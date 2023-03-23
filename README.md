@@ -2,6 +2,23 @@
 
 Este repositorio crea la infraestructura necesaria para el despliegue de la aplicación mediante terraform.
 
+# Preparacion del Docker image.
+
+1. Se debe dejar el docker image listo y construido, para que despues que se cree el registro en la infra, se pueda hacer push de la imagen de docker.
+2. La imagen de docker se crea a partir del repositorio de codigo
+
+´´´
+docker build -t nombre/imagen .
+´´´
+
+en el comando anterior el punto indica el contexto de ejecucion de la imagen de docker.
+
+3. despues de eso se crea el tag, pero como el repo aun no se ha creado, esta tarea se hace despues de que este lista la infra estructura.
+
+´´´
+docker tag nombre/image repositorio_remoto_aws
+´´´
+
 # Preparación de ambiente para despliegue - Amazon Provider
 
 1. Crear un bucket con versionamiento y encriptación en la infraestructura de AWS que permita soportar los ficheros ".tfsate" de terraform.
